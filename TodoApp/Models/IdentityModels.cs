@@ -29,5 +29,7 @@ namespace TodoApp.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<TodoApp.Models.TodoItem> TodoItems { get; set; }
     }
 }

@@ -4,7 +4,8 @@ app.run(function ($templateCache, $http) {
     $http.get('/Scripts/app/views/home.html', { cache: $templateCache });
     $http.get('/Scripts/app/views/login.html', { cache: $templateCache });
     $http.get('/Scripts/app/views/register.html', { cache: $templateCache });
-})
+    $http.get('/Scripts/app/views/todo-items.html', { cache: $templateCache });
+});
 
 app.config(['$routeProvider',
     function ($routeProvider) {
@@ -17,6 +18,9 @@ app.config(['$routeProvider',
             }).
             when('/register', {
                 templateUrl: '/Scripts/app/views/register.html'
+            }).
+            when('/todos', {
+                templateUrl: '/Scripts/app/views/todo-items.html'
             }).
             otherwise({
                 redirectTo: '/'
@@ -41,7 +45,7 @@ app.controller("RegisterCtrl", function ($scope, $http, $location) {
     }
 });
 
-app.controller("LoginCtrl", function ($scope, $http, $window) {
+app.controller("LoginCtrl", function ($scope, $http, $window, $location) {
 
     $scope.login = function (user) {
         var data = {
@@ -57,7 +61,25 @@ app.controller("LoginCtrl", function ($scope, $http, $window) {
         })
             .success(function (data) {
                 $window.sessionStorage.setItem('accessToken', data.access_token);
-                console.log(data.access_token);
+                $location.path('/todos');
             });
     }
 });
+
+app.controller("TodoItemsCtrl", function ($scope, $http, $window) {
+
+    var token = $window.sessionStorage.getItem('accessToken');
+    var headers = {};
+    if (token) {
+        headers.Authroization = 'Bearer ' + token;
+    }
+
+    $http({
+        method: 'GET',
+        url: 'api/TodoItems',
+        headers: headers
+    })
+        .success(function (data) {
+            console.log(data);
+        });
+})
