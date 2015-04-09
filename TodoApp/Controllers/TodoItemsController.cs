@@ -22,8 +22,9 @@ namespace TodoApp.Controllers
         // GET: api/TodoItems
         public IQueryable<TodoItem> GetTodoItems()
         {
-            string currentUserId = User.Identity.GetUserId();
-            return db.TodoItems.Where(x => x.ApplicationUserId == currentUserId);
+            var user = this.User.Identity;
+            string userId = user.GetUserId().ToString();
+            return db.TodoItems.Where(x => x.ApplicationUserId == userId);
         }
 
         // GET: api/TodoItems/5
@@ -83,6 +84,9 @@ namespace TodoApp.Controllers
                 return BadRequest(ModelState);
             }
 
+            var user = this.User.Identity;
+            string userId = user.GetUserId().ToString();
+            todoItem.ApplicationUserId = userId;
             db.TodoItems.Add(todoItem);
             await db.SaveChangesAsync();
 
@@ -97,6 +101,13 @@ namespace TodoApp.Controllers
             if (todoItem == null)
             {
                 return NotFound();
+            }
+
+            var user = this.User.Identity;
+            string userId = user.GetUserId().ToString();
+            if (todoItem.ApplicationUserId != userId)
+            {
+                return BadRequest("Unauthorized access");
             }
 
             db.TodoItems.Remove(todoItem);

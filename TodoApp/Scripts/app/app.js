@@ -71,15 +71,39 @@ app.controller("TodoItemsCtrl", function ($scope, $http, $window) {
     var token = $window.sessionStorage.getItem('accessToken');
     var headers = {};
     if (token) {
-        headers.Authroization = 'Bearer ' + token;
+        headers.Authorization = 'Bearer ' + token;
     }
 
     $http({
         method: 'GET',
-        url: 'api/TodoItems',
+        url: '/api/TodoItems',
         headers: headers
     })
+    .success(function (data) {
+        $scope.todos = data;
+    });
+
+    $scope.add = function (name) {
+        $http({
+            method: 'POST',
+            url: '/api/TodoItems/',
+            data: { Name: name },
+            headers: headers
+        })
         .success(function (data) {
-            console.log(data);
+            $scope.todos.push(data);
+            $scope.name = '';
         });
+    }
+
+    $scope.remove = function (todo) {
+        $http({
+            method: 'DELETE',
+            url: '/api/TodoItems/' + todo.Id,
+            headers: headers
+        })
+        .success(function (data) {
+            $scope.todos.splice($scope.todos.indexOf(todo), 1);
+        });
+    }
 })
