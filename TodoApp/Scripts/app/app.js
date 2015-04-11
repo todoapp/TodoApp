@@ -1,11 +1,17 @@
 ﻿var app = angular.module("app", ['ngRoute']);
 
-app.run(function ($templateCache, $http) {
+app.run(['$templateCache', '$http', '$rootScope', '$window', function ($templateCache, $http, $rootScope, $window) {
     $http.get('/Scripts/app/views/home.html', { cache: $templateCache });
     $http.get('/Scripts/app/views/login.html', { cache: $templateCache });
     $http.get('/Scripts/app/views/register.html', { cache: $templateCache });
     $http.get('/Scripts/app/views/todo-items.html', { cache: $templateCache });
-});
+     
+    $rootScope.logout = function () {
+        $window.sessionStorage.removeItem('accessToken');
+        $window.location.href = '/#/login';
+        $rootScope.loggedIn = false;
+    }
+}]);
 
 app.config(['$routeProvider',
     function ($routeProvider) {
@@ -28,7 +34,12 @@ app.config(['$routeProvider',
     }
 ]);
 
-app.controller("RegisterCtrl", function ($scope, $http, $location) {
+app.controller("LogoutCtrl", ['$scope', '$window', '$location', function ($scope, $window, $location) {
+    $window.sessionStorage.removeItem('accessToken');
+    $location.path('/login');
+}]);
+
+app.controller("RegisterCtrl", ['$scope', '$http', '$location', function ($scope, $http, $location) {
 
     $scope.update = function (user) {
 
@@ -43,10 +54,9 @@ app.controller("RegisterCtrl", function ($scope, $http, $location) {
                 $location.path('/login');
             });
     }
-});
+}]);
 
-app.controller("LoginCtrl", function ($scope, $http, $window, $location) {
-
+app.controller("LoginCtrl", ['$rootScope', '$scope', '$http', '$window', '$location', function ($rootScope, $scope, $http, $window, $location) {
     $scope.login = function (user) {
         var data = {
             grant_type: 'password',
@@ -61,17 +71,20 @@ app.controller("LoginCtrl", function ($scope, $http, $window, $location) {
         })
             .success(function (data) {
                 $window.sessionStorage.setItem('accessToken', data.access_token);
+                $rootScope.loggedIn = true;
                 $location.path('/todos');
             });
     }
-});
+}]);
 
-app.controller("TodoItemsCtrl", function ($scope, $http, $window) {
+app.controller("TodoItemsCtrl", ['$scope', '$http', '$window', '$location', function ($scope, $http, $window, $location) {
 
     var token = $window.sessionStorage.getItem('accessToken');
     var headers = {};
     if (token) {
         headers.Authorization = 'Bearer ' + token;
+    } else {
+        $location.path('/login');
     }
 
     $http({
@@ -106,4 +119,4 @@ app.controller("TodoItemsCtrl", function ($scope, $http, $window) {
             $scope.todos.splice($scope.todos.indexOf(todo), 1);
         });
     }
-})
+}]);

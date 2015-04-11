@@ -22,8 +22,10 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="/#/login">Sign In</a></li>
-                    <li><a href="/#/register">Sign Up</a></li>
+                    <li ng-hide="loggedIn"><a href="/#/login">Sign In</a></li>
+                    <li ng-hide="loggedIn"><a href="/#/register">Sign Up</a></li>
+                    <li ng-show="loggedIn"><a href="/#/todos">Todos</a></li>
+                    <li ng-show="loggedIn"><a href="" ng-click="logout()">Sign Out</a></li>
                 </ul>
             </div>
         </div>
