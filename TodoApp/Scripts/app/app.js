@@ -5,7 +5,11 @@ app.run(['$templateCache', '$http', '$rootScope', '$window', function ($template
     $http.get('/Scripts/app/views/login.html', { cache: $templateCache });
     $http.get('/Scripts/app/views/register.html', { cache: $templateCache });
     $http.get('/Scripts/app/views/todo-items.html', { cache: $templateCache });
-     
+    
+    if ($window.sessionStorage.getItem('accessToken')) {
+        $rootScope.loggedIn = true;
+    }
+
     $rootScope.logout = function () {
         $window.sessionStorage.removeItem('accessToken');
         $window.location.href = '/#/login';
