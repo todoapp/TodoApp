@@ -124,3 +124,15 @@ app.controller("TodoItemsCtrl", ['$scope', '$http', '$window', '$location', func
         });
     }
 }]);
+
+app.directive('focusElement', ['$timeout', function ($timeout) {
+    return {
+        restrict: 'A',
+        link: function ($scope, element, attrs) {
+            $timeout(function () {
+                console.log(element);
+                element[0].focus();
+            });
+        }
+    }
+}]);

@@ -8,7 +8,10 @@
         <div class="col-md-5">
             <form novalidate class="form-inline">
                 <div class="form-group">
-                    <input type="text" class="form-control" ng-model="name" />
+                    <input type="text" 
+                           class="form-control" 
+                           ng-model="name"
+                           focus-element />
                 </div>
                 <input class="btn btn-default" type="submit" ng-click="add(name)" value="Add" />
             </form>
