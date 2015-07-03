@@ -130,7 +130,6 @@ app.directive('focusElement', ['$timeout', function ($timeout) {
         restrict: 'A',
         link: function ($scope, element, attrs) {
             $timeout(function () {
-                console.log(element);
                 element[0].focus();
             });
         }
