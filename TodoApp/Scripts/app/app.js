@@ -101,6 +101,9 @@ app.controller("TodoItemsCtrl", ['$scope', '$http', '$window', '$location', func
     });
 
     $scope.add = function (name) {
+        if (!$scope.itemForm.$valid) {
+            return;
+        }
         $http({
             method: 'POST',
             url: '/api/TodoItems/',
